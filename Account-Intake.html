@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account & Invoice Intake | Gornoden LLC</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html">
+        <img src="logo-mark.png" alt="Gornoden LLC logo">
+        <span>Gornoden LLC</span>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">CLIENT ACCOUNT INTAKE</p>
+          <h1>Submit an Account or Invoice</h1>
+          <p>
+            Use this form to submit a commercial account or invoice to
+            Gornoden LLC for AR Management or Recovery review.
+          </p>
+        </div>
+
+        <form
+          class="contact-card"
+          action="https://formspree.io/f/xppzvbzl"
+          method="POST"
+        >
+          <input type="hidden" name="Submission Type" value="Account & Invoice Intake">
+
+          <h2>Client Information</h2>
+
+          <label>
+            Client Legal Name
+            <input name="Client Legal Name" required>
+          </label>
+
+          <h2>Debtor Business Information</h2>
+
+          <label>
+            Debtor Contact Name
+            <input name="Debtor Contact Name">
+          </label>
+
+          <label>
+            Debtor Business Name
+            <input name="Debtor Business Name" required>
+          </label>
+
+          <label>
+            Debtor Business Address
+            <input name="Debtor Business Address" required>
+          </label>
+
+          <label>
+            Debtor City
+            <input name="Debtor City" required>
+          </label>
+
+          <label>
+            Debtor State
+            <input name="Debtor State" value="ME" required>
+          </label>
+
+          <label>
+            Debtor ZIP Code
+            <input name="Debtor ZIP Code" required>
+          </label>
+
+          <label>
+            Debtor Email
+            <input name="Debtor Email" type="email">
+          </label>
+
+          <label>
+            Debtor Phone
+            <input name="Debtor Phone" type="tel">
+          </label>
+
+          <h2>Invoice / Account Information</h2>
+
+          <label>
+            Invoice / Account #
+            <input name="Invoice Account Number" required>
+          </label>
+
+          <label>
+            Original Invoice Amount
+            <input
+              name="Original Invoice Amount"
+              type="number"
+              min="0"
+              step="0.01"
+              required
+            >
+          </label>
+
+          <label>
+            Current Reported Balance
+            <input
+              name="Current Reported Balance"
+              type="number"
+              min="0"
+              step="0.01"
+              required
+            >
+          </label>
+
+          <label>
+            Invoice Date
+            <input name="Invoice Date" type="date" required>
+          </label>
+
+          <label>
+            Contractual Due Date
+            <input name="Contractual Due Date" type="date" required>
+          </label>
+
+          <label>
+            Service Requested
+            <select name="Service Requested" required>
+              <option value="">Select a service</option>
+              <option>AR Management</option>
+              <option>Recovery</option>
+              <option>Both AR & Recovery</option>
+            </select>
+          </label>
+
+          <label>
+            Additional Account Notes
+            <textarea
+              name="Account Notes"
+              rows="5"
+              placeholder="Provide any information that may help Gornoden review this account."
+            ></textarea>
+          </label>
+
+          <label>
+            <input
+              name="Commercial B2B Certification"
+              type="checkbox"
+              value="Certified"
+              required
+            >
+            I certify that this account arises from a commercial
+            business-to-business transaction and is not consumer debt.
+          </label>
+
+          <p class="form-note">
+            Submission of this form does not automatically activate Recovery
+            Services. Recovery activity requiring client authorization will
+            not begin until the required authorization has been completed and
+            accepted by Gornoden LLC.
+          </p>
+
+          <button class="btn primary" type="submit">
+            Submit Account
+          </button>
+
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© Gornoden LLC</p>
+      <p>gornodenbusiness@gmail.com • (207) 508-9674</p>
+    </div>
+  </footer>
+</body>
+</html>
