@@ -42,3 +42,26 @@ h1,h2,h3{line-height:1.15;margin-top:0}h1{font-size:clamp(42px,5.6vw,66px);lette
 footer{background:#041326;color:white;padding:28px 0;border-top:1px solid rgba(216,170,63,.28)}.footer-grid{display:flex;justify-content:space-between;gap:24px;align-items:center}.footer-grid strong{color:var(--gold-bright)}.footer-grid p,.footer-right{color:#abb6c6;font-size:13px;margin:4px 0}
 @media(max-width:850px){.nav a:not(.nav-cta){display:none}.hero-grid,.cards.two,.about-grid,.contact-grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.faq-grid{grid-template-columns:1fr}.hero{padding-top:60px}.footer-grid{flex-direction:column;align-items:flex-start}}
 @media(max-width:560px){.container{width:min(100% - 28px,1120px)}.nav-wrap{height:72px}.brand-mark{width:44px;height:44px}.brand-text strong{font-size:19px}.hero{padding:44px 0 50px}.hero h1{font-size:clamp(34px,9.8vw,44px);line-height:1.06;margin-bottom:16px}.hero-copy{font-size:17px;line-height:1.55}.hero-actions{flex-direction:column;margin:22px 0 18px;gap:10px}.btn{width:100%;padding:12px 18px}.trust-row{display:grid;gap:8px}.price-grid{grid-template-columns:1fr}.section{padding:64px 0}.hero-card{padding:26px}.nav-cta{padding:9px 14px}}
+
+/* Onboarding form */
+.contact-card select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #d7dce3;
+  border-radius: 10px;
+  font: inherit;
+  background: #fff;
+}
+
+.contact-card label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.contact-card input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin-top: 3px;
+}
