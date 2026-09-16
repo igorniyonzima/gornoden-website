@@ -253,5 +253,38 @@
   </div>
 </footer>
 
+<script>
+  const onboardingForm = document.querySelector("form.contact-card");
+
+  onboardingForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const submitButton = onboardingForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+
+    try {
+      const response = await fetch(onboardingForm.action, {
+        method: "POST",
+        body: new FormData(onboardingForm),
+        headers: {
+          Accept: "application/json"
+        }
+      });
+
+      if (response.ok) {
+        window.location.href = "thank-you.html";
+      } else {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Onboarding Information";
+        alert("We couldn't submit your information. Please try again.");
+      }
+    } catch (error) {
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit Onboarding Information";
+      alert("We couldn't submit your information. Please try again.");
+    }
+  });
+</script>
 </body>
 </html>
