@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Portal | Gornoden LLC</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body {
+      margin: 0;
+      background: #06172b;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+
+    .portal-page {
+      min-height: 100vh;
+    }
+
+    .portal-header {
+      border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+      background: #071a30;
+    }
+
+    .portal-header-inner {
+      max-width: 1100px;
+      margin: auto;
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .portal-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .portal-brand img {
+      width: 70px;
+      height: auto;
+    }
+
+    .portal-brand span {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .sign-out-btn {
+      background: transparent;
+      border: 1px solid #d4af37;
+      color: #d4af37;
+      padding: 10px 18px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .portal-content {
+      max-width: 1100px;
+      margin: auto;
+      padding: 60px 24px;
+    }
+
+    .eyebrow {
+      color: #d4af37;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 13px;
+    }
+
+    .portal-content h1 {
+      font-size: 42px;
+      margin: 10px 0;
+    }
+
+    .welcome-text {
+      color: #c7cfda;
+      font-size: 17px;
+      margin-bottom: 40px;
+    }
+
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+    }
+
+    .portal-card {
+      background: #0b213b;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    .portal-card h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .portal-card p {
+      color: #c7cfda;
+      line-height: 1.6;
+      min-height: 76px;
+    }
+
+    .portal-button {
+      display: inline-block;
+      background: #d4af37;
+      color: #071426;
+      padding: 12px 20px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .coming-soon {
+      display: inline-block;
+      color: #d4af37;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .client-email {
+      color: #d4af37;
+    }
+
+    @media (max-width: 600px) {
+      .portal-content h1 {
+        font-size: 34px;
+      }
+
+      .portal-brand span {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="portal-page">
+
+    <header class="portal-header">
+      <div class="portal-header-inner">
+
+        <div class="portal-brand">
+          <img src="logo-mark.png" alt="Gornoden LLC logo">
+          <span>Gornoden LLC</span>
+        </div>
+
+        <button id="sign-out-btn" class="sign-out-btn">
+          Sign Out
+        </button>
+
+      </div>
+    </header>
+
+    <main class="portal-content">
+
+      <p class="eyebrow">GORNODEN LLC • CLIENT PORTAL</p>
+
+      <h1>Welcome to Your Client Portal</h1>
+
+      <p class="welcome-text">
+        Signed in as
+        <span id="client-email" class="client-email">Loading...</span>
+      </p>
+
+      <div class="portal-grid">
+
+        <div class="portal-card">
+          <h2>Submit Account or Invoice</h2>
+
+          <p>
+            Submit a new commercial account or invoice for
+            Gornoden AR Management or Recovery review.
+          </p>
+
+          <a href="Account-Intake.html" class="portal-button">
+            Submit Account
+          </a>
+        </div>
+
+        <div class="portal-card">
+          <h2>Submitted Accounts</h2>
+
+          <p>
+            View commercial accounts and invoices previously
+            submitted to Gornoden LLC.
+          </p>
+
+          <span class="coming-soon">
+            Coming Soon
+          </span>
+        </div>
+
+        <div class="portal-card">
+          <h2>Account Status</h2>
+
+          <p>
+            Track the status of accounts being handled through
+            Gornoden services.
+          </p>
+
+          <span class="coming-soon">
+            Coming Soon
+          </span>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const supabaseUrl =
+      "https://kjfcsmsnlmuvnsmqjyor.supabase.co";
+
+    const supabaseKey =
+      "sb_publishable_jdkIp4aSZnl1BS2Fn09xPw_J-uRXufz";
+
+    const supabaseClient =
+      window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function loadPortal() {
+      const { data: { session } } =
+        await supabaseClient.auth.getSession();
+
+      if (!session) {
+        window.location.replace("login.html");
+        return;
+      }
+
+      document.getElementById("client-email").textContent =
+        session.user.email;
+    }
+
+    document.getElementById("sign-out-btn")
+      .addEventListener("click", async () => {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.replace("login.html");
+      });
+
+    loadPortal();
+  </script>
+
+</body>
+</html>
