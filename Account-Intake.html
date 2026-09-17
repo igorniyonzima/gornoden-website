@@ -217,14 +217,24 @@ protectPortal();
 
     const formData = new FormData(form);
 
-    const response = await fetch(form.action, {
-      method: "POST",
-      body: formData,
-      headers: {
-        "Accept": "application/json"
-      }
-    });
+const { data: { session } } =
+  await supabaseClient.auth.getSession();
 
+if (!session) {
+  window.location.replace("login.html");
+  return;
+}
+
+const response = await fetch(
+  "https://kjfcsmsnlmuvnsmqjyor.supabase.co/functions/v1/submit-account",
+  {
+    method: "POST",
+    body: formData,
+    headers: {
+      "Authorization": `Bearer ${session.access_token}`
+    }
+  }
+);
     if (response.ok) {
       window.location.href = "account-thank-you.html";
     } else {
