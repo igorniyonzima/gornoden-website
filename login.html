@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Portal Login | Gornoden LLC</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #071421;
+      font-family: Arial, sans-serif;
+    }
+
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      box-sizing: border-box;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 520px;
+      padding: 50px 40px;
+      box-sizing: border-box;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: #0b1b2a;
+    }
+
+    .login-logo {
+      width: 90px;
+      height: auto;
+      margin-bottom: 25px;
+    }
+
+    .portal-label {
+      margin-bottom: 18px;
+      color: #d4af37 !important;
+      -webkit-text-fill-color: #d4af37 !important;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+    }
+
+    .login-card h1 {
+      margin: 0 0 15px;
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
+      font-size: 44px;
+      line-height: 1.15;
+    }
+
+    .login-description {
+      margin: 0 0 30px;
+      color: #d6dde5;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .login-card input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 16px;
+      margin-bottom: 15px;
+      border: 1px solid #ccd3da;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #111111;
+      font-size: 16px;
+    }
+
+    .login-card button {
+      width: 100%;
+      padding: 16px;
+      border: 0;
+      border-radius: 8px;
+      background: #d4af37;
+      color: #10202e;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #message {
+      min-height: 24px;
+      margin-top: 18px;
+      color: #ffffff;
+      line-height: 1.5;
+    }
+
+    .home-link {
+      display: inline-block;
+      margin-top: 15px;
+      color: #d4af37;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="login-page">
+    <section class="login-card">
+
+      <img src="logo-mark.png" alt="Gornoden LLC" class="login-logo">
+
+      <p class="portal-label">GORNODEN LLC • CLIENT PORTAL</p>
+
+      <h1>Client Login</h1>
+
+      <p class="login-description">
+        Sign in to access your Gornoden Client Portal.
+      </p>
+
+      <form id="login-form">
+
+        <input
+          type="email"
+          id="email"
+          placeholder="Email Address"
+          autocomplete="email"
+          required
+        >
+
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button type="submit">Sign In</button>
+
+      </form>
+
+      <p id="message"></p>
+
+      <a href="index.html" class="home-link">Return to Gornoden Home</a>
+
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const supabaseUrl =
+      "https://kjfcsmsnlmuvnsmqjyor.supabase.co";
+
+    const supabaseKey =
+      "PASTE_YOUR_EXISTING_PUBLISHABLE_KEY_HERE";
+
+    const supabaseClient =
+      window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    const form = document.getElementById("login-form");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      message.textContent = "Signing in...";
+
+      const { error } =
+        await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+      if (error) {
+        message.textContent =
+          "Unable to sign in. Please check your email and password.";
+        return;
+      }
+
+      message.textContent =
+        "Signed in successfully. Redirecting...";
+
+      window.location.href = "Account-Intake.html";
+    });
+  </script>
+
+</body>
+</html>
