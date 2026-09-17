@@ -181,8 +181,29 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  const form = document.querySelector("form");
+ const supabaseUrl =
+  "https://kjfcsmsnlmuvnsmqjyor.supabase.co";
+
+const supabaseKey =
+  "sb_publishable_jdkIp4aSZnl1BS2Fn09xPw_J-uRXufz";
+
+const supabaseClient =
+  window.supabase.createClient(supabaseUrl, supabaseKey);
+
+async function protectPortal() {
+  const { data: { session } } =
+    await supabaseClient.auth.getSession();
+
+  if (!session) {
+    window.location.replace("login.html");
+  }
+}
+
+protectPortal();
+    
+    const form = document.querySelector("form");
 
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
