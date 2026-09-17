@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Admin Dashboard | Gornoden LLC</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, rgba(34, 62, 102, 0.55), transparent 42%),
+        linear-gradient(135deg, #07111f 0%, #0b1b30 55%, #081421 100%);
+      color: #f5f7fa;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .admin-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .admin-header {
+      margin-bottom: 35px;
+    }
+
+    .eyebrow {
+      color: #d4af37;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .admin-header h1 {
+      margin: 12px 0;
+      font-size: 48px;
+    }
+
+    .admin-header p {
+      color: rgba(255,255,255,.72);
+      max-width: 700px;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 28px 0 35px;
+    }
+
+    .admin-button {
+      display: inline-block;
+      padding: 12px 18px;
+      background: #d4af37;
+      color: #07111f;
+      border: 1px solid #d4af37;
+      border-radius: 8px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .admin-button:hover {
+      opacity: .9;
+    }
+
+    .dashboard-card {
+      padding: 28px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(8px);
+    }
+
+    .dashboard-card h2 {
+      margin-top: 0;
+    }
+
+    #admin-email {
+      color: #d4af37;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="admin-wrap">
+
+    <div class="admin-header">
+      <div class="eyebrow">GORNODEN LLC • ADMINISTRATION</div>
+
+      <h1>Admin Dashboard</h1>
+
+      <p>
+        Manage Gornoden client accounts, submitted invoices,
+        service activity, and account status.
+      </p>
+    </div>
+
+    <div class="admin-actions">
+      <a href="portal.html" class="admin-button">Client Portal</a>
+      <button id="sign-out" class="admin-button">Sign Out</button>
+    </div>
+
+    <div class="dashboard-card">
+      <h2>Administrator Access</h2>
+
+      <p>
+        Signed in as
+        <span id="admin-email">Checking session...</span>
+      </p>
+
+      <p>
+        Account management controls will appear here after
+        administrator authorization is verified.
+      </p>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    /*
+      We will add the Supabase connection and secure
+      administrator authorization in the next step.
+    */
+  </script>
+
+</body>
+</html>
