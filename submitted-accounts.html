@@ -10,6 +10,69 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(34, 62, 102, 0.55), transparent 42%),
+    linear-gradient(135deg, #07111f 0%, #0b1b30 55%, #081421 100%);
+  color: #f5f7fa;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.accounts-header .eyebrow {
+  color: #d4af37;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.accounts-header h1 {
+  color: #ffffff;
+  font-size: 48px;
+}
+
+.accounts-header p {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.portal-button {
+  display: inline-block;
+  padding: 11px 18px;
+  background: #d4af37;
+  color: #07111f;
+  border: 1px solid #d4af37;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.portal-button:hover {
+  opacity: 0.9;
+}
+
+.accounts-table-wrap {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.accounts-table th {
+  color: #d4af37;
+}
+
+.accounts-table td {
+  color: #f5f7fa;
+}
+
+.status-badge {
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.empty-message {
+  color: rgba(255, 255, 255, 0.75);
+}
     .accounts-wrap {
       max-width: 1100px;
       margin: 0 auto;
