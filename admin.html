@@ -116,10 +116,15 @@
         <span id="admin-email">Checking session...</span>
       </p>
 
-      <p>
-        Account management controls will appear here after
-        administrator authorization is verified.
-      </p>
+     <div id="account-management">
+  <h2 style="margin-top: 30px;">Account Management</h2>
+  <p>Review submitted client accounts and update their current status.</p>
+
+  <div id="admin-accounts">
+    <p>Loading submitted accounts...</p>
+  </div>
+       
+</div>
     </div>
 
   </main>
@@ -157,7 +162,24 @@
     window.location.href = "portal.html";
     return;
   }
-}
+await loadAccount();
+    }
+
+ async function loadAccounts() {
+  const { data: accounts, error } = await supabaseClient
+    .from("account_submissions")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    document.getElementById("admin-accounts").innerHTML =
+      "<p>Unable to load submitted accounts.</p>";
+    return;
+  }
+
+  console.log("Admin accounts:", accounts);
+}   
 
 verifyAdmin();
 </script>
