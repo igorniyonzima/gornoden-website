@@ -127,11 +127,40 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    /*
-      We will add the Supabase connection and secure
-      administrator authorization in the next step.
-    */
-  </script>
+  const SUPABASE_URL = "https://kjfcsmsnlmuvnsmqjyor.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtqZmNzbXNubG11dm5zbXFqeW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MDI5MzUsImV4cCI6MjEwNTE3ODkzNX0.WcsDWy_nR9ITYH850-LdiJOoUSQCbSZzE035tKxIWMg";
+
+  const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+    async function verifyAdmin() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  document.getElementById("admin-email").textContent =
+    session.user.email;
+
+  const { data: admin, error } = await supabaseClient
+    .from("admin_users")
+    .select("user_id")
+    .eq("user_id", session.user.id)
+    .maybeSingle();
+
+  if (error || !admin) {
+    alert("Administrator access required.");
+    window.location.href = "portal.html";
+    return;
+  }
+}
+
+verifyAdmin();
+</script>
 
 </body>
 </html>
