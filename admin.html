@@ -178,7 +178,25 @@ await loadAccounts();
     return;
   }
 
-  console.log("Admin accounts:", accounts);
+  const container = document.getElementById("admin-accounts");
+
+if (!accounts || accounts.length === 0) {
+  container.innerHTML = "<p>No submitted accounts yet.</p>";
+  return;
+}
+
+container.innerHTML = accounts.map(account => `
+  <div style="border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:20px; margin-top:18px;">
+    <h3>${account.debtor_business_name || "Unnamed Business"}</h3>
+
+    <p><strong>Client:</strong> ${account.client_legal_name || "—"}</p>
+    <p><strong>Account #:</strong> ${account.invoice_account_number || "—"}</p>
+    <p><strong>Original Amount:</strong> $${Number(account.original_invoice_amount || 0).toLocaleString()}</p>
+    <p><strong>Current Balance:</strong> $${Number(account.current_reported_balance || 0).toLocaleString()}</p>
+    <p><strong>Service:</strong> ${account.service_requested || "—"}</p>
+    <p><strong>Status:</strong> ${account.status || "Received"}</p>
+  </div>
+`).join("");
 }   
 
 verifyAdmin();
