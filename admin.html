@@ -245,6 +245,14 @@ container.innerHTML = accounts.map(account => `
   Update Status
 </button>
   </div>
+  <button class="details-button" onclick="toggleDetails('${account.id}')">
+  View Full Details
+</button>
+
+<div id="details-${account.id}" style="display:none;">
+</div>
+
+</div>
 `).join("");
 }  
 
