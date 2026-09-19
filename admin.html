@@ -250,6 +250,19 @@ container.innerHTML = accounts.map(account => `
 </button>
 
 <div id="details-${account.id}" style="display:none;">
+<div class="account-details">
+  <p><strong>Debtor Contact:</strong> ${account.debtor_contact_name || "—"}</p>
+  <p><strong>Business Address:</strong> ${account.debtor_business_address || "—"}</p>
+  <p><strong>City:</strong> ${account.debtor_city || "—"}</p>
+  <p><strong>State:</strong> ${account.debtor_state || "—"}</p>
+  <p><strong>ZIP Code:</strong> ${account.debtor_zip_code || "—"}</p>
+  <p><strong>Email:</strong> ${account.debtor_email || "—"}</p>
+  <p><strong>Phone:</strong> ${account.debtor_phone || "—"}</p>
+  <p><strong>Invoice Date:</strong> ${account.invoice_date || "—"}</p>
+  <p><strong>Contractual Due Date:</strong> ${account.contractual_due_date || "—"}</p>
+  <p><strong>Account Notes:</strong> ${account.account_notes || "—"}</p>
+  <p><strong>B2B Certified:</strong> ${account.b2b_certified ? "Yes" : "No"}</p>
+</div>
 </div>
 
 </div>
