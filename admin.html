@@ -306,6 +306,14 @@ container.innerHTML = accounts.map(account => `
   <p><strong>Contractual Due Date:</strong> ${account.contractual_due_date || "—"}</p>
   <p><strong>Account Notes:</strong> ${account.account_notes || "—"}</p>
   <p><strong>B2B Certified:</strong> ${account.b2b_certified ? "Yes" : "No"}</p>
+<div class="admin-notes">
+  <strong>Private Admin Notes:</strong>
+  <textarea id="admin-notes-${account.id}" rows="4" placeholder="Add private notes for this account...">${account.admin_notes || ""}</textarea>
+  <button class="status-button" onclick="saveAdminNotes('${account.id}')">
+    Save Notes
+  </button>
+</div>
+  
 </div>
 </div>
 
@@ -339,7 +347,23 @@ function toggleDetails(accountId) {
   alert("Account status updated successfully.");
   await loadAccounts();
 }
+async function saveAdminNotes(accountId) {
+  const textarea = document.getElementById(`admin-notes-${accountId}`);
+  const adminNotes = textarea.value.trim();
 
+  const { error } = await supabaseClient
+    .from("account_submissions")
+    .update({ admin_notes: adminNotes })
+    .eq("id", accountId);
+
+  if (error) {
+    console.error(error);
+    alert("Unable to save admin notes.");
+    return;
+  }
+
+  alert("Admin notes saved successfully.");
+}
 verifyAdmin();
 </script>
 
