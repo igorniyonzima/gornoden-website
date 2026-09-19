@@ -268,7 +268,15 @@ container.innerHTML = accounts.map(account => `
 </div>
 `).join("");
 }  
+function toggleDetails(accountId) {
+  const details = document.getElementById(`details-${accountId}`);
 
+  if (details.style.display === "none") {
+    details.style.display = "block";
+  } else {
+    details.style.display = "none";
+  }
+}
     async function updateStatus(accountId) {
   const select = document.getElementById(`status-${accountId}`);
   const newStatus = select.value;
