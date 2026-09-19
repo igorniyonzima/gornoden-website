@@ -195,9 +195,41 @@ container.innerHTML = accounts.map(account => `
     <p><strong>Current Balance:</strong> $${Number(account.current_reported_balance || 0).toLocaleString()}</p>
     <p><strong>Service:</strong> ${account.service_requested || "—"}</p>
     <p><strong>Status:</strong> ${account.status || "Received"}</p>
+    <select id="status-${account.id}">
+ <option value="Received" ${account.status === "Received" ? "selected" : ""}>Received</option>
+<option value="Under Review" ${account.status === "Under Review" ? "selected" : ""}>Under Review</option>
+<option value="AR Active" ${account.status === "AR Active" ? "selected" : ""}>AR Active</option>
+<option value="Recovery Authorized" ${account.status === "Recovery Authorized" ? "selected" : ""}>Recovery Authorized</option>
+<option value="Recovery Active" ${account.status === "Recovery Active" ? "selected" : ""}>Recovery Active</option>
+<option value="Payment Plan" ${account.status === "Payment Plan" ? "selected" : ""}>Payment Plan</option>
+<option value="Paid/Resolved" ${account.status === "Paid/Resolved" ? "selected" : ""}>Paid/Resolved</option>
+<option value="Closed" ${account.status === "Closed" ? "selected" : ""}>Closed</option>
+</select>
+<button onclick="updateStatus('${account.id}')">
+  Update Status
+</button>
   </div>
 `).join("");
-}   
+}  
+
+    async function updateStatus(accountId) {
+  const select = document.getElementById(`status-${accountId}`);
+  const newStatus = select.value;
+
+  const { error } = await supabaseClient
+    .from("account_submissions")
+    .update({ status: newStatus })
+    .eq("id", accountId);
+
+  if (error) {
+    console.error(error);
+    alert("Unable to update account status.");
+    return;
+  }
+
+  alert("Account status updated successfully.");
+  await loadAccounts();
+}
 
 verifyAdmin();
 </script>
