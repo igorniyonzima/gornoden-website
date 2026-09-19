@@ -25,6 +25,41 @@
       padding: 60px 20px;
     }
 
+    .status-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.status-select {
+  background: #0b1b30;
+  color: #f5f7fa;
+  border: 1px solid #d4af37;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.status-button {
+  background: #d4af37;
+  color: #081421;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 18px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.status-button:hover {
+  filter: brightness(1.08);
+}
+
     .admin-header {
       margin-bottom: 35px;
     }
@@ -195,7 +230,8 @@ container.innerHTML = accounts.map(account => `
     <p><strong>Current Balance:</strong> $${Number(account.current_reported_balance || 0).toLocaleString()}</p>
     <p><strong>Service:</strong> ${account.service_requested || "—"}</p>
     <p><strong>Status:</strong> ${account.status || "Received"}</p>
-    <select id="status-${account.id}">
+    <div class="status-controls">
+<select class="status-select" id="status-${account.id}">
  <option value="Received" ${account.status === "Received" ? "selected" : ""}>Received</option>
 <option value="Under Review" ${account.status === "Under Review" ? "selected" : ""}>Under Review</option>
 <option value="AR Active" ${account.status === "AR Active" ? "selected" : ""}>AR Active</option>
@@ -205,7 +241,7 @@ container.innerHTML = accounts.map(account => `
 <option value="Paid/Resolved" ${account.status === "Paid/Resolved" ? "selected" : ""}>Paid/Resolved</option>
 <option value="Closed" ${account.status === "Closed" ? "selected" : ""}>Closed</option>
 </select>
-<button onclick="updateStatus('${account.id}')">
+<button class="status-button" onclick="updateStatus('${account.id}')">
   Update Status
 </button>
   </div>
