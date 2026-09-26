@@ -551,7 +551,7 @@ return payments;
 
   if (accountError) {
     console.error("Unable to load account:", accountError);
-    alert("Unable to void payment.");
+    alert("Unable to void payment: " + accountError.message);
     return;
   }
 
