@@ -569,10 +569,13 @@ return payments;
     return;
   }
 
-  const { error: deleteError } = await supabaseClient
-    .from("account_payments")
-    .delete()
-    .eq("id", paymentId);
+ const { error: deleteError } = await supabaseClient
+  .from("account_payments")
+  .update({
+    is_voided: true,
+    voided_at: new Date().toISOString()
+  })
+  .eq("id", paymentId);
 
   if (deleteError) {
     console.error("Unable to delete payment:", deleteError);
