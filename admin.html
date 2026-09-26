@@ -453,7 +453,7 @@ if (newBalance < 0) {
     .from("account_payments")
     .insert({
       account_id: accountId,
-      amount: amount,
+      payment_amount: amount,
       payment_date: paymentDate
     });
 
