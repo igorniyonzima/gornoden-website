@@ -545,7 +545,7 @@ return payments;
 
   const { data: account, error: accountError } = await supabaseClient
     .from("account_submissions")
-    .select("current_balance")
+    .select("current_reported_balance")
     .eq("id", accountId)
     .single();
 
@@ -556,11 +556,11 @@ return payments;
   }
 
   const restoredBalance =
-    Number(account.current_balance) + Number(paymentAmount);
+    Number(account.current_reported_balance) + Number(paymentAmount);
 
   const { error: balanceError } = await supabaseClient
     .from("account_submissions")
-    .update({ current_balance: restoredBalance })
+    .update({ current_reported_balance: restoredBalance })
     .eq("id", accountId);
 
   if (balanceError) {
