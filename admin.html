@@ -519,12 +519,15 @@ if (historyContainer) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })}
-  <button
-    class="status-button"
-    style="margin-left:10px;"
-    onclick="voidPayment('${payment.id}', '${accountId}', ${Number(payment.payment_amount)})">
-    Void
-  </button>
+  ${payment.is_voided
+  ? `<strong style="margin-left:10px;">VOIDED</strong>`
+  : `<button
+      class="status-button"
+      style="margin-left:10px;"
+      onclick="voidPayment('${payment.id}', '${accountId}', ${Number(payment.payment_amount)})">
+      Void
+    </button>`
+}
 </p>
       `).join("")}
       <p><strong>Total Payments Recorded:</strong> $${totalPaid.toLocaleString(undefined, {
