@@ -432,7 +432,7 @@ async function saveAdminNotes(accountId) {
 
  const { data: account, error: accountError } = await supabaseClient
   .from("account_submissions")
-  .select("current_balance")
+  .select("current_reported_balance")
   .eq("id", accountId)
   .single();
 
@@ -442,7 +442,7 @@ if (accountError) {
   return;
 }
 
-const newBalance = Number(account.current_balance) - amount;
+const newBalance = Number(account.current_reported_balance) - amount;
 
 if (newBalance < 0) {
   alert("Payment cannot be greater than the current balance.");
@@ -464,7 +464,7 @@ if (newBalance < 0) {
   }
 const { error: balanceError } = await supabaseClient
   .from("account_submissions")
-  .update({ current_balance: newBalance })
+  .update({ current_reported_balance: newBalance })
   .eq("id", accountId);
 
 if (balanceError) {
