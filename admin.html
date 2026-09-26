@@ -505,10 +505,12 @@ if (historyContainer) {
   if (payments.length === 0) {
     historyContainer.innerHTML = "<p>No payments recorded yet.</p>";
   } else {
-    const totalPaid = payments.reduce(
-      (total, payment) => total + Number(payment.payment_amount || 0),
-      0
-    );
+   const totalPaid = payments
+  .filter(payment => !payment.is_voided)
+  .reduce(
+    (total, payment) => total + Number(payment.payment_amount || 0),
+    0
+  );
 
     historyContainer.innerHTML = `
       ${payments.map(payment => `
