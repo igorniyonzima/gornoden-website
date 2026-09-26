@@ -338,6 +338,29 @@ container.innerHTML = accounts.map(account => `
     Save Notes
   </button>
 </div>
+
+<div class="admin-notes">
+  <strong>Record Payment:</strong>
+
+  <input
+    type="number"
+    id="payment-amount-${account.id}"
+    placeholder="Payment amount"
+    step="0.01"
+    min="0.01"
+  >
+
+  <input
+    type="date"
+    id="payment-date-${account.id}"
+  >
+
+  <button
+    class="status-button"
+    onclick="recordPayment('${account.id}')">
+    Record Payment
+  </button>
+</div>
   
 </div>
 </div>
@@ -389,6 +412,89 @@ async function saveAdminNotes(accountId) {
 
   alert("Admin notes saved successfully.");
 }
+
+  async function recordPayment(accountId) {
+  const amountInput = document.getElementById(`payment-amount-${accountId}`);
+  const dateInput = document.getElementById(`payment-date-${accountId}`);
+
+  const amount = parseFloat(amountInput.value);
+  const paymentDate = dateInput.value;
+
+  if (!amount || amount <= 0) {
+    alert("Please enter a valid payment amount.");
+    return;
+  }
+
+  if (!paymentDate) {
+    alert("Please select a payment date.");
+    return;
+  }
+
+ const { data: account, error: accountError } = await supabaseClient
+  .from("account_submissions")
+  .select("current_balance")
+  .eq("id", accountId)
+  .single();
+
+if (accountError) {
+  console.error("Unable to load current balance:", accountError);
+  alert("Unable to load the account balance.");
+  return;
+}
+
+const newBalance = Number(account.current_balance) - amount;
+
+if (newBalance < 0) {
+  alert("Payment cannot be greater than the current balance.");
+  return;
+}
+    
+    const { error } = await supabaseClient
+    .from("account_payments")
+    .insert({
+      account_id: accountId,
+      amount: amount,
+      payment_date: paymentDate
+    });
+
+  if (error) {
+    console.error("Unable to record payment:", error);
+    alert("Unable to record payment.");
+    return;
+  }
+const { error: balanceError } = await supabaseClient
+  .from("account_submissions")
+  .update({ current_balance: newBalance })
+  .eq("id", accountId);
+
+if (balanceError) {
+  console.error("Unable to update current balance:", balanceError);
+  alert("Payment was recorded, but the account balance could not be updated.");
+  return;
+}
+    
+  alert("Payment recorded successfully.");
+  amountInput.value = "";
+  dateInput.value = "";
+
+  await loadAccounts();
+}
+    
+    async function loadAccountPayments(accountId) {
+
+      const { data, error } = await supabaseClient
+    .from("account_payments")
+    .select("*")
+    .eq("account_id", accountId)
+    .order("payment_date", { ascending: false });
+
+  if (error) {
+    console.error("Unable to load account payments:", error);
+    return [];
+  }
+
+  return data || [];
+}  
 verifyAdmin();
 </script>
 
