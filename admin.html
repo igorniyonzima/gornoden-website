@@ -361,6 +361,16 @@ container.innerHTML = accounts.map(account => `
     Record Payment
   </button>
 </div>
+
+<div id="payment-history-${account.id}" style="margin-top:20px;">
+</div>
+
+<div class="admin-notes">
+  <strong>Payment History:</strong>
+  <div id="payment-history-${account.id}">
+    <p>No payments recorded yet.</p>
+  </div>
+</div>
   
 </div>
 </div>
@@ -373,6 +383,8 @@ function toggleDetails(accountId) {
 
   if (details.style.display === "none") {
     details.style.display = "block";
+    
+loadAccountPayments(accountId);
   } else {
     details.style.display = "none";
   }
@@ -493,7 +505,36 @@ if (balanceError) {
     return [];
   }
 
-  return data || [];
+  const payments = data || [];
+const historyContainer = document.getElementById(`payment-history-${accountId}`);
+
+if (historyContainer) {
+  if (payments.length === 0) {
+    historyContainer.innerHTML = "<p>No payments recorded yet.</p>";
+  } else {
+    const totalPaid = payments.reduce(
+      (total, payment) => total + Number(payment.payment_amount || 0),
+      0
+    );
+
+    historyContainer.innerHTML = `
+      ${payments.map(payment => `
+        <p>
+          ${payment.payment_date} — $${Number(payment.payment_amount).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}
+        </p>
+      `).join("")}
+      <p><strong>Total Payments Recorded:</strong> $${totalPaid.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}</p>
+    `;
+  }
+}
+
+return payments;
 }  
 verifyAdmin();
 </script>
