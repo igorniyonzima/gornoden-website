@@ -512,12 +512,18 @@ if (historyContainer) {
 
     historyContainer.innerHTML = `
       ${payments.map(payment => `
-        <p>
-          ${payment.payment_date} — $${Number(payment.payment_amount).toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          })}
-        </p>
+       <p>
+  ${payment.payment_date} — $${Number(payment.payment_amount).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })}
+  <button
+    class="status-button"
+    style="margin-left:10px;"
+    onclick="voidPayment('${payment.id}', '${accountId}', ${Number(payment.payment_amount)})">
+    Void
+  </button>
+</p>
       `).join("")}
       <p><strong>Total Payments Recorded:</strong> $${totalPaid.toLocaleString(undefined, {
         minimumFractionDigits: 2,
@@ -529,7 +535,62 @@ if (historyContainer) {
 
 return payments;
 }  
-verifyAdmin();
+
+    async function voidPayment(paymentId, accountId, paymentAmount) {
+  const confirmed = confirm(
+    `Void this $${Number(paymentAmount).toFixed(2)} payment? The amount will be added back to the account balance.`
+  );
+
+  if (!confirmed) return;
+
+  const { data: account, error: accountError } = await supabaseClient
+    .from("account_submissions")
+    .select("current_balance")
+    .eq("id", accountId)
+    .single();
+
+  if (accountError) {
+    console.error("Unable to load account:", accountError);
+    alert("Unable to void payment.");
+    return;
+  }
+
+  const restoredBalance =
+    Number(account.current_balance) + Number(paymentAmount);
+
+  const { error: balanceError } = await supabaseClient
+    .from("account_submissions")
+    .update({ current_balance: restoredBalance })
+    .eq("id", accountId);
+
+  if (balanceError) {
+    console.error("Unable to restore balance:", balanceError);
+    alert("Unable to void payment.");
+    return;
+  }
+
+  const { error: deleteError } = await supabaseClient
+    .from("account_payments")
+    .delete()
+    .eq("id", paymentId);
+
+  if (deleteError) {
+    console.error("Unable to delete payment:", deleteError);
+
+    // Put the balance back if deleting the payment failed.
+    await supabaseClient
+      .from("account_submissions")
+      .update({ current_balance: Number(account.current_balance) })
+      .eq("id", accountId);
+
+    alert("Payment could not be voided.");
+    return;
+  }
+
+  alert("Payment voided successfully.");
+  await loadAccounts();
+}
+    verifyAdmin();
 </script>
 
 </body>
