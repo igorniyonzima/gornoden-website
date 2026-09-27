@@ -542,6 +542,13 @@ return payments;
 }  
 
     async function voidPayment(paymentId, accountId, paymentAmount) {
+      const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+
+if (userError || !user) {
+  console.error("Unable to identify admin:", userError);
+  alert("Unable to identify the logged-in admin.");
+  return;
+}
   const confirmed = confirm(
     `Void this $${Number(paymentAmount).toFixed(2)} payment? The amount will be added back to the account balance.`
   );
@@ -578,7 +585,8 @@ return payments;
   .from("account_payments")
   .update({
     is_voided: true,
-    voided_at: new Date().toISOString()
+    voided_at: new Date().toISOString(), voided_by: user.id
+  
   })
   .eq("id", paymentId);
 
