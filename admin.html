@@ -497,6 +497,28 @@ if (balanceError) {
     console.error("Unable to load account payments:", error);
     return [];
   }
+      const voidedUserIds = [
+  ...new Set(
+    data
+      .filter(payment => payment.is_voided && payment.voided_by)
+      .map(payment => payment.voided_by)
+  )
+];
+
+let adminNames = {};
+
+if (voidedUserIds.length > 0) {
+  const { data: admins, error: adminError } = await supabaseClient
+    .from("admin_users")
+    .select("user_id, display_name")
+    .in("user_id", voidedUserIds);
+
+  if (!adminError && admins) {
+    adminNames = Object.fromEntries(
+      admins.map(admin => [admin.user_id, admin.display_name])
+    );
+  }
+}
 
   const payments = data || [];
 const historyContainer = document.getElementById(`payment-history-${accountId}`);
@@ -520,7 +542,13 @@ if (historyContainer) {
     maximumFractionDigits: 2
   })}
   ${payment.is_voided
-  ? `<strong style="margin-left:10px;">VOIDED</strong>`
+? `<span style="margin-left:10px;">
+    <strong>VOIDED</strong>
+    <small style="display:block; margin-top:4px;">
+      Voided by: ${adminNames[payment.voided_by] || "Unknown Admin"}
+      ${payment.voided_at ? ` • ${new Date(payment.voided_at).toLocaleString()}` : ""}
+    </small>
+  </span>`
   : `<button
       class="status-button"
       style="margin-left:10px;"
