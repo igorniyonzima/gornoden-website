@@ -289,7 +289,14 @@ await loadAccounts();
     .from("account_submissions")
     .select("*")
     .order("created_at", { ascending: false });
+const { data: clientUpdates, error: updatesError } = await supabaseClient
+  .from("account_client_updates")
+  .select("*")
+  .order("created_at", { ascending: false });
 
+if (updatesError) {
+  console.error("Unable to load client updates:", updatesError);
+}
   if (error) {
     console.error(error);
     document.getElementById("admin-accounts").innerHTML =
@@ -304,7 +311,12 @@ if (!accounts || accounts.length === 0) {
   return;
 }
 
-container.innerHTML = accounts.map(account => `
+container.innerHTML = accounts.map(account => {
+  const updatesForAccount = (clientUpdates || []).filter(
+    update => update.account_id === account.id
+  );
+
+  return `
   <div style="border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:20px; margin-top:18px;">
     <h3>${account.debtor_business_name || "Unnamed Business"}</h3>
 
@@ -367,7 +379,27 @@ container.innerHTML = accounts.map(account => `
     Post Client Update
   </button>
 </div>
+<div class="admin-notes">
+  <strong>Client Update History:</strong>
 
+  ${
+    updatesForAccount.length > 0
+      ? `
+        <div style="margin-top:10px;">
+          ${updatesForAccount.map(update => `
+            <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,.12);">
+              <div>${update.update_text}</div>
+              <small style="opacity:.7;">
+                ${new Date(update.created_at).toLocaleString()}
+                ${update.posted_by ? ` • ${update.posted_by}` : ""}
+              </small>
+            </div>
+          `).join("")}
+        </div>
+      `
+      : `<p style="opacity:.7; margin-top:8px;">No client updates posted yet.</p>`
+  }
+</div>
 <div class="admin-notes">
   <strong>Record Payment:</strong>
 
@@ -398,7 +430,8 @@ container.innerHTML = accounts.map(account => `
 </div>
 
 </div>
-`).join("");
+  `;
+}).join("");
 }  
 function toggleDetails(accountId) {
   const details = document.getElementById(`details-${accountId}`);
