@@ -355,6 +355,20 @@ container.innerHTML = accounts.map(account => `
 </div>
 
 <div class="admin-notes">
+  <strong>Client Update:</strong>
+  <textarea
+    id="client-update-${account.id}"
+    rows="4"
+    placeholder="Enter an update that will be visible to the client..."
+  ></textarea>
+  <button
+    class="status-button"
+    onclick="postClientUpdate('${account.id}')">
+    Post Client Update
+  </button>
+</div>
+
+<div class="admin-notes">
   <strong>Record Payment:</strong>
 
   <input
@@ -432,7 +446,34 @@ async function saveAdminNotes(accountId) {
 
   alert("Admin notes saved successfully.");
 }
+async function postClientUpdate(accountId) {
+  const textarea = document.getElementById(`client-update-${accountId}`);
+  const updateText = textarea.value.trim();
 
+  if (!updateText) {
+    alert("Please enter a client update.");
+    return;
+  }
+
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  const { error } = await supabaseClient
+    .from("account_client_updates")
+    .insert({
+      account_id: accountId,
+      update_text: updateText,
+      posted_by: user?.email || "Unknown Admin"
+    });
+
+  if (error) {
+    console.error("Unable to post client update:", error);
+    alert("Unable to post client update.");
+    return;
+  }
+
+  textarea.value = "";
+  alert("Client update posted successfully.");
+}
   async function recordPayment(accountId) {
   const amountInput = document.getElementById(`payment-amount-${accountId}`);
   const dateInput = document.getElementById(`payment-date-${accountId}`);
