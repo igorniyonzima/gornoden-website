@@ -215,6 +215,9 @@ if (updatesError) {
       loading.style.display = "none";
 
       data.forEach((account) => {
+        const updatesForAccount = (clientUpdates || []).filter(
+  (update) => Number(update.account_id) === Number(account.id)
+);
 
         const card = document.createElement("div");
         card.className = "status-card";
@@ -256,12 +259,25 @@ if (updatesError) {
               <span class="detail-value">
                 ${new Date(account.created_at).toLocaleDateString()}
               </span>
-            </div>
+    </div>
 
+    ${updatesForAccount.length > 0 ? `
+      <div class="client-updates">
+        <h3>Account Updates</h3>
+
+        ${updatesForAccount.map(update => `
+          <div class="client-update-item">
+            <p>${update.update_text}</p>
+            <small>${new Date(update.created_at).toLocaleString()}</small>
           </div>
-        `;
+        `).join("")}
+      </div>
+    ` : ""}
 
-        container.appendChild(card);
+  </div>
+`;
+
+container.appendChild(card);
       });
     }
 
