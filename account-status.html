@@ -175,6 +175,7 @@
       const { data, error } = await supabaseClient
         .from("account_submissions")
         .select(`
+        id,
           created_at,
           debtor_business_name,
           invoice_account_number,
