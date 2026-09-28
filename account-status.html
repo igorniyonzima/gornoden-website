@@ -121,6 +121,46 @@
       text-align: center;
       color: rgba(255, 255, 255, 0.75);
     }
+    .updates-toggle {
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 193, 7, 0.45);
+  border-radius: 10px;
+  background: rgba(255, 193, 7, 0.08);
+  color: #ffc107;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.updates-toggle:hover {
+  background: rgba(255, 193, 7, 0.14);
+}
+
+.updates-history {
+  display: none;
+  margin-top: 12px;
+}
+
+.updates-history.show {
+  display: block;
+}
+
+.client-update-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.client-update-item:last-child {
+  border-bottom: none;
+}
+
+.client-update-item small {
+  display: block;
+  margin-bottom: 5px;
+  color: rgba(255, 255, 255, 0.6);
+}
   </style>
 </head>
 
@@ -262,17 +302,27 @@ if (updatesError) {
     </div>
 
     ${updatesForAccount.length > 0 ? `
-      <div class="client-updates">
-        <h3>Account Updates</h3>
+  <div class="client-updates">
+    <button
+      type="button"
+      class="updates-toggle"
+      onclick="this.nextElementSibling.classList.toggle('show')"
+    >
+      Account Updates (${updatesForAccount.length}) →
+    </button>
 
-        ${updatesForAccount.map(update => `
-          <div class="client-update-item">
-            <p>${update.update_text}</p>
-            <small>${new Date(update.created_at).toLocaleString()}</small>
-          </div>
-        `).join("")}
-      </div>
-    ` : ""}
+    <div class="updates-history">
+      ${updatesForAccount.map(update => `
+        <div class="client-update-item">
+          <small>
+            ${new Date(update.created_at).toLocaleString()}
+          </small>
+          <p>${update.update_text}</p>
+        </div>
+      `).join("")}
+    </div>
+  </div>
+` : ""}
 
   </div>
 `;
