@@ -184,6 +184,14 @@
           status
         `)
         .order("created_at", { ascending: false });
+      const { data: clientUpdates, error: updatesError } = await supabaseClient
+  .from("account_client_updates")
+  .select("account_id, update_text, posted_by, created_at")
+  .order("created_at", { ascending: false });
+
+if (updatesError) {
+  console.error("Unable to load client updates:", updatesError);
+}
 
       const loading =
         document.getElementById("loading-message");
