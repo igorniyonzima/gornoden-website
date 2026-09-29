@@ -312,10 +312,9 @@ if (!accounts || accounts.length === 0) {
 }
 
 container.innerHTML = accounts.map(account => {
-  const updatesForAccount = (clientUpdates || []).filter(
-    update => update.account_id === account.id
-  );
-
+ const updatesForAccount = (clientUpdates || []).filter(
+  update => String(update.account_id) === String(account.id)
+);
   return `
   <div style="border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:20px; margin-top:18px;">
     <h3>${account.debtor_business_name || "Unnamed Business"}</h3>
