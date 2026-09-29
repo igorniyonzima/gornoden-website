@@ -388,14 +388,38 @@ container.innerHTML = accounts.map(account => {
       ? `
         <div style="margin-top:10px;">
           ${updatesForAccount.map(update => `
-            <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,.12);">
-              <div>${update.update_text}</div>
-              <small style="opacity:.7;">
-                ${new Date(update.created_at).toLocaleString()}
-                ${update.posted_by ? ` • ${update.posted_by}` : ""}
-              </small>
-            </div>
-          `).join("")}
+    <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,.12);">
+        <div style="${update.is_voided ? "text-decoration:line-through; opacity:.6;" : ""}">
+            ${update.update_text}
+        </div>
+
+        <small style="opacity:.7;">
+            ${new Date(update.created_at).toLocaleString()}
+            ${update.posted_by ? ` • ${update.posted_by}` : ""}
+        </small>
+
+        ${
+            update.is_voided
+                ? `
+                    <div style="margin-top:6px; font-size:.85rem;">
+                        <strong>VOIDED</strong>
+                        ${update.voided_at ? ` • ${new Date(update.voided_at).toLocaleString()}` : ""}
+                        ${update.voided_by ? ` • ${update.voided_by}` : ""}
+                    </div>
+                `
+                : `
+                    <div style="margin-top:8px;">
+                        <button
+                            class="status-button"
+                            onclick="voidClientUpdate(${update.id})">
+                            Void
+                        </button>
+                    </div>
+                `
+        }
+    </div>
+`).join("")}
+
         </div>
       `
       : `<p style="opacity:.7; margin-top:8px;">No client updates posted yet.</p>`
@@ -508,6 +532,40 @@ async function postClientUpdate(accountId) {
   textarea.value = "";
   alert("Client update posted successfully.");
 }
+async function voidClientUpdate(updateId) {
+  const confirmed = confirm(
+    "Void this client update? It will remain in the history as VOIDED."
+  );
+
+  if (!confirmed) return;
+
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    alert("Your session has expired. Please log in again.");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("account_client_updates")
+    .update({
+      is_voided: true,
+      voided_by: session.user.email,
+      voided_at: new Date().toISOString()
+    })
+    .eq("id", updateId);
+
+  if (error) {
+    console.error("Unable to void client update:", error);
+    alert("Unable to void client update: " + error.message);
+    return;
+  }
+
+  await loadAccounts();
+}
+    
   async function recordPayment(accountId) {
   const amountInput = document.getElementById(`payment-amount-${accountId}`);
   const dateInput = document.getElementById(`payment-date-${accountId}`);
