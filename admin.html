@@ -293,6 +293,8 @@ const { data: clientUpdates, error: updatesError } = await supabaseClient
   .from("account_client_updates")
 .select("account_id, update_text, posted_by, created_at")
   .order("created_at", { ascending: false });
+   console.log("ADMIN CLIENT UPDATES:", clientUpdates);
+console.log("ADMIN UPDATES ERROR:", updatesError);
 
 if (updatesError) {
   console.error("Unable to load client updates:", updatesError);
