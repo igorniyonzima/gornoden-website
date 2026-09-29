@@ -224,9 +224,10 @@
           status
         `)
         .order("created_at", { ascending: false });
-      const { data: clientUpdates, error: updatesError } = await supabaseClient
+    const { data: clientUpdates, error: updatesError } = await supabaseClient
   .from("account_client_updates")
   .select("account_id, update_text, posted_by, created_at")
+  .eq("is_voided", false)
   .order("created_at", { ascending: false });
 
 if (updatesError) {
