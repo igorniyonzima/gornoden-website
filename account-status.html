@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Account Status | Gornoden LLC</title>
-
+ 
   <link rel="stylesheet" href="styles.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -233,7 +233,15 @@
 if (updatesError) {
   console.error("Unable to load client updates:", updatesError);
 }
+const { data: payments, error: paymentsError } = await supabaseClient
+  .from("account_payments")
+  .select("account_id, amount, payment_date, created_at")
+  .eq("is_voided", false)
+  .order("payment_date", { ascending: false });
 
+if (paymentsError) {
+  console.error("Unable to load payments:", paymentsError);
+}
       const loading =
         document.getElementById("loading-message");
 
@@ -259,7 +267,9 @@ if (updatesError) {
         const updatesForAccount = (clientUpdates || []).filter(
   (update) => Number(update.account_id) === Number(account.id)
 );
-
+const paymentsForAccount = (payments || []).filter(
+  (payment) => Number(payment.account_id) === Number(account.id)
+);
         const card = document.createElement("div");
         card.className = "status-card";
 
@@ -322,6 +332,27 @@ if (updatesError) {
         </div>
       `).join("")}
     </div>
+    <div class="updates-history">
+  <div class="client-updates">
+    <strong>Payment History</strong>
+  </div>
+
+  ${paymentsForAccount.length > 0 ? `
+    <div>
+      ${paymentsForAccount.map(payment => `
+        <div class="client-update-item">
+          <small>${new Date(payment.payment_date || payment.created_at).toLocaleDateString()}</small>
+          <p>${Number(payment.amount || 0).toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD"
+          })}</p>
+        </div>
+      `).join("")}
+    </div>
+  ` : `
+    <p>No payments recorded yet.</p>
+  `}
+</div>
   </div>
 ` : ""}
 
