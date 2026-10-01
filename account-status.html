@@ -282,78 +282,78 @@ data.forEach((account) => {
     currency: "USD"
   });
 
-  const updatesHtml =
-    updatesForAccount.length > 0
-      ? `
-        <div class="client-updates">
-          <button
-            type="button"
-            class="updates-toggle"
-            onclick="this.nextElementSibling.classList.toggle('show')"
-          >
-            Account Updates (${updatesForAccount.length}) →
-          </button>
+ const updatesHtml =
+  updatesForAccount.length > 0
+    ? `
+      <div class="client-updates">
+        <button
+          type="button"
+          class="updates-toggle"
+          onclick="this.nextElementSibling.classList.toggle('show')"
+        >
+          Account Updates (${updatesForAccount.length}) →
+        </button>
 
-          <div class="updates-history">
-            ${updatesForAccount
-              .map(
-                (update) => `
-                  <div class="client-update-item">
-                    <small>
-                      ${new Date(update.created_at).toLocaleDateString()}
-                    </small>
-                    <p>${update.update_text || ""}</p>
-                  </div>
-                `
-              )
-              .join("")}
-          </div>
+        <div class="updates-history">
+          ${updatesForAccount
+            .map(
+              (update) => `
+                <div class="client-update-item">
+                  <small>
+                    ${new Date(update.created_at).toLocaleDateString()}
+                  </small>
+                  <p>${update.update_text || ""}</p>
+                </div>
+              `
+            )
+            .join("")}
         </div>
-      `
-      : "";
+      </div>
+    `
+    : "";
 
-  const paymentsHtml =
-    paymentsForAccount.length > 0
-      ? `
-        <div class="payment-history">
-          <button
-            type="button"
-            class="updates-toggle"
-            onclick="this.nextElementSibling.classList.toggle('show')"
-          >
-            Payment History (${paymentsForAccount.length}) →
-          </button>
+const paymentsHtml =
+  paymentsForAccount.length > 0
+    ? `
+      <div class="payment-history">
+        <button
+          type="button"
+          class="updates-toggle"
+          onclick="this.nextElementSibling.classList.toggle('show')"
+        >
+          Payment History (${paymentsForAccount.length}) →
+        </button>
 
-          <div class="updates-history">
-            ${paymentsForAccount
-              .map(
-                (payment) => `
-                  <div class="client-update-item">
-                    <small>
-                      ${new Date(
-                        payment.payment_date || payment.created_at
-                      ).toLocaleDateString()}
-                    </small>
+        <div class="updates-history">
+          ${paymentsForAccount
+            .map(
+              (payment) => `
+                <div class="client-update-item">
+                  <small>
+                    ${new Date(
+                      payment.payment_date || payment.created_at
+                    ).toLocaleDateString()}
+                  </small>
 
-                    <p>
-                      Payment received:
-                      <strong>
-                        ${Number(
-                          payment.payment_amount || 0
-                        ).toLocaleString("en-US", {
-                          style: "currency",
-                          currency: "USD"
-                        })}
-                      </strong>
-                    </p>
-                  </div>
-                `
-              )
-              .join("")}
-          </div>
+                  <p>
+                    Payment received:
+                    <strong>
+                      ${Number(
+                        payment.payment_amount || 0
+                      ).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD"
+                      })}
+                    </strong>
+                  </p>
+                </div>
+              `
+            )
+            .join("")}
         </div>
-      `
-      : "";
+      </div>
+    `
+    : "";
 
   card.innerHTML = `
     <h2>${account.debtor_business_name || "Commercial Account"}</h2>
