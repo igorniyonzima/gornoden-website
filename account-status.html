@@ -263,104 +263,141 @@ if (paymentsError) {
 
       loading.style.display = "none";
 
-      data.forEach((account) => {
-        const updatesForAccount = (clientUpdates || []).filter(
-  (update) => Number(update.account_id) === Number(account.id)
-);
-const paymentsForAccount = (payments || []).filter(
-  (payment) => Number(payment.account_id) === Number(account.id)
-);
-        const card = document.createElement("div");
-        card.className = "status-card";
+data.forEach((account) => {
+  const updatesForAccount = (clientUpdates || []).filter(
+    (update) => Number(update.account_id) === Number(account.id)
+  );
 
-        const balance = Number(
-          account.current_reported_balance || 0
-        ).toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD"
-        });
+  const paymentsForAccount = (payments || []).filter(
+    (payment) => Number(payment.account_id) === Number(account.id)
+  );
 
-        card.innerHTML = `
-          <h2>${account.debtor_business_name || "Commercial Account"}</h2>
+  const card = document.createElement("div");
+  card.className = "status-card";
 
-          <p class="account-number">
-            Account # ${account.invoice_account_number || "—"}
-          </p>
+  const balance = Number(
+    account.current_reported_balance || 0
+  ).toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD"
+  });
 
-          <span class="status-badge">
-            ${account.status || "Received"}
-          </span>
+  const updatesHtml =
+    updatesForAccount.length > 0
+      ? `
+        <div class="client-updates">
+          <button
+            type="button"
+            class="updates-toggle"
+            onclick="this.nextElementSibling.classList.toggle('show')"
+          >
+            Account Updates (${updatesForAccount.length}) →
+          </button>
 
-          <div class="status-details">
-
-            <div>
-              <span class="detail-label">Current Balance</span>
-              <span class="detail-value">${balance}</span>
-            </div>
-
-            <div>
-              <span class="detail-label">Service</span>
-              <span class="detail-value">
-                ${account.service_requested || "—"}
-              </span>
-            </div>
-
-            <div>
-              <span class="detail-label">Submitted</span>
-              <span class="detail-value">
-                ${new Date(account.created_at).toLocaleDateString()}
-              </span>
-    </div>
-
-    ${updatesForAccount.length > 0 ? `
-  <div class="client-updates">
-    <button
-      type="button"
-      class="updates-toggle"
-      onclick="this.nextElementSibling.classList.toggle('show')"
-    >
-      Account Updates (${updatesForAccount.length}) →
-    </button>
-
-    <div class="updates-history">
-      ${updatesForAccount.map(update => `
-        <div class="client-update-item">
-          <small>
-            ${new Date(update.created_at).toLocaleString()}
-          </small>
-          <p>${update.update_text}</p>
+          <div class="updates-history">
+            ${updatesForAccount
+              .map(
+                (update) => `
+                  <div class="client-update-item">
+                    <small>
+                      ${new Date(update.created_at).toLocaleDateString()}
+                    </small>
+                    <p>${update.update_text || ""}</p>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
         </div>
-      `).join("")}
-    </div>
-    <div class="updates-history">
-  <div class="client-updates">
-    <strong>Payment History</strong>
-  </div>
+      `
+      : "";
 
-  ${paymentsForAccount.length > 0 ? `
-    <div>
-      ${paymentsForAccount.map(payment => `
-        <div class="client-update-item">
-          <small>${new Date(payment.payment_date || payment.created_at).toLocaleDateString()}</small>
-          <p>${Number(payment.payment_amount || 0).toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD"
-          })}</p>
+  const paymentsHtml =
+    paymentsForAccount.length > 0
+      ? `
+        <div class="payment-history">
+          <button
+            type="button"
+            class="updates-toggle"
+            onclick="this.nextElementSibling.classList.toggle('show')"
+          >
+            Payment History (${paymentsForAccount.length}) →
+          </button>
+
+          <div class="updates-history">
+            ${paymentsForAccount
+              .map(
+                (payment) => `
+                  <div class="client-update-item">
+                    <small>
+                      ${new Date(
+                        payment.payment_date || payment.created_at
+                      ).toLocaleDateString()}
+                    </small>
+
+                    <p>
+                      Payment received:
+                      <strong>
+                        ${Number(
+                          payment.payment_amount || 0
+                        ).toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD"
+                        })}
+                      </strong>
+                    </p>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
         </div>
-      `).join("")}
+      `
+      : "";
+
+  card.innerHTML = `
+    <h2>${account.debtor_business_name || "Commercial Account"}</h2>
+
+    <p class="account-number">
+      Account # ${account.invoice_account_number || "—"}
+    </p>
+
+    <span class="status-badge">
+      ${account.status || "Received"}
+    </span>
+
+    <div class="status-details">
+      <div>
+        <span class="detail-label">Current Balance</span>
+        <span class="detail-value">${balance}</span>
+      </div>
+
+      <div>
+        <span class="detail-label">Service</span>
+        <span class="detail-value">
+          ${account.service_requested || "—"}
+        </span>
+      </div>
+
+      <div>
+        <span class="detail-label">Submitted</span>
+        <span class="detail-value">
+          ${
+            account.created_at
+              ? new Date(account.created_at).toLocaleDateString()
+              : "—"
+          }
+        </span>
+      </div>
     </div>
-  ` : `
-    <p>No payments recorded yet.</p>
-  `}
-</div>
-  </div>
-` : ""}
 
-  </div>
-`;
+    ${updatesHtml}
 
-container.appendChild(card);
-      });
+    ${paymentsHtml}
+  `;
+
+  container.appendChild(card);
+});
     }
 
     document
