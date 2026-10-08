@@ -65,3 +65,5 @@ footer{background:#041326;color:white;padding:28px 0;border-top:1px solid rgba(2
   flex: 0 0 18px;
   margin-top: 3px;
 }
+
+@media(max-width:850px){.nav a[href="login.html"]{display:inline-flex}}
