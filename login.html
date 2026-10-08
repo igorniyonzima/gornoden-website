@@ -175,7 +175,7 @@
 
       message.textContent = "Signing in...";
 
-      const { error } =
+      const { data, error } =
         await supabaseClient.auth.signInWithPassword({
           email: email,
           password: password
@@ -187,10 +187,25 @@
         return;
       }
 
-      message.textContent =
-        "Signed in successfully. Redirecting...";
+      try {
+        const { data: admin, error: adminError } = await supabaseClient
+          .from("admin_users")
+          .select("user_id")
+          .eq("user_id", data.user.id)
+          .maybeSingle();
 
-      window.location.href = "portal.html";
+        if (adminError) {
+          message.textContent =
+            "Signed in, but unable to verify your account access. Please try again.";
+          return;
+        }
+
+        message.textContent = "Signed in successfully. Redirecting...";
+        window.location.replace(admin ? "admin.html" : "portal.html");
+      } catch {
+        message.textContent =
+          "Signed in, but unable to verify your account access. Please try again.";
+      }
     });
   </script>
 
