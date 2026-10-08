@@ -295,6 +295,13 @@ await loadAccounts();
     .from("account_submissions")
     .select("*")
     .order("created_at", { ascending: false });
+const { data: privateNotes, error: privateNotesError } = await supabaseClient
+    .from("account_admin_notes")
+    .select("account_id, admin_notes");
+  if (privateNotesError) console.error("Unable to load private notes:", privateNotesError);
+  (accounts || []).forEach(account => {
+    account.admin_notes = (privateNotes || []).find(n => String(n.account_id) === String(account.id))?.admin_notes || "";
+  });
 const { data: clientUpdates, error: updatesError } = await supabaseClient
   .from("account_client_updates")
 .select("id, account_id, update_text, posted_by, created_at, is_voided, voided_by, voided_at")
@@ -498,9 +505,8 @@ async function saveAdminNotes(accountId) {
   const adminNotes = textarea.value.trim();
 
   const { error } = await supabaseClient
-    .from("account_submissions")
-    .update({ admin_notes: adminNotes })
-    .eq("id", accountId);
+    .from("account_admin_notes")
+    .upsert({ account_id: accountId, admin_notes: adminNotes }, { onConflict: "account_id" });
 
   if (error) {
     console.error(error);
