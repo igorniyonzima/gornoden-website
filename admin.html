@@ -293,7 +293,7 @@ await loadAccounts();
  async function loadAccounts() {
   const { data: accounts, error } = await supabaseClient
     .from("account_submissions")
-    .select("*")
+    .select("id,created_at,user_id,client_legal_name,debtor_contact_name,debtor_business_name,debtor_business_address,debtor_city,debtor_state,debtor_zip_code,debtor_email,debtor_phone,invoice_account_number,original_invoice_amount,current_reported_balance,invoice_date,contractual_due_date,service_requested,account_notes,b2b_certified,status")
     .order("created_at", { ascending: false });
 const { data: privateNotes, error: privateNotesError } = await supabaseClient
     .from("account_admin_notes")
