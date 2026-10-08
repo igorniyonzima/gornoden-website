@@ -605,80 +605,28 @@ async function voidClientUpdate(updateId) {
   await loadAccounts();
 }
     
+  const paymentsInFlight = new Set();
   async function recordPayment(accountId) {
-  const amountInput = document.getElementById(`payment-amount-${accountId}`);
-  const dateInput = document.getElementById(`payment-date-${accountId}`);
-
-  const amount = parseFloat(amountInput.value);
-  const paymentDate = dateInput.value;
-
-  if (!amount || amount <= 0) {
-    alert("Please enter a valid payment amount.");
-    return;
+    if (paymentsInFlight.has(accountId)) return;
+    const amountInput = document.getElementById(`payment-amount-${accountId}`);
+    const dateInput = document.getElementById(`payment-date-${accountId}`);
+    const amount = Number(amountInput.value);
+    if (!Number.isFinite(amount) || amount <= 0 || !dateInput.value) {
+      alert("Enter a positive payment amount and a payment date."); return;
+    }
+    paymentsInFlight.add(accountId);
+    try {
+      const { error } = await supabaseClient.rpc("record_account_payment", {
+        p_account_id: accountId, p_amount: amount, p_date: dateInput.value
+      });
+      if (error) throw error;
+      amountInput.value = ""; dateInput.value = "";
+      await loadAccounts();
+      alert("Payment recorded successfully.");
+    } catch (error) { alert("Unable to record payment: " + error.message); }
+    finally { paymentsInFlight.delete(accountId); }
   }
 
-  if (!paymentDate) {
-    alert("Please select a payment date.");
-    return;
-  }
-
- const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
- if (userError || !user) {
-   alert("Your session has expired. Please sign in again before recording a payment.");
-   return;
- }
-
- const { data: account, error: accountError } = await supabaseClient
-  .from("account_submissions")
-  .select("current_reported_balance")
-  .eq("id", accountId)
-  .single();
-
-if (accountError) {
-  console.error("Unable to load current balance:", accountError);
-  alert("Unable to load the account balance.");
-  return;
-}
-
-const newBalance = Math.round((Number(account.current_reported_balance) - amount) * 100) / 100;
-
-if (newBalance < 0) {
-  alert("Payment cannot be greater than the current balance.");
-  return;
-}
-    
-    const { error } = await supabaseClient
-    .from("account_payments")
-    .insert({
-      account_id: accountId,
-      payment_amount: amount,
-      payment_date: paymentDate,
-      recorded_by: user.id
-    });
-
-  if (error) {
-    console.error("Unable to record payment:", error);
-    alert("Unable to record payment.");
-    return;
-  }
-const { error: balanceError } = await supabaseClient
-  .from("account_submissions")
-  .update({ current_reported_balance: newBalance })
-  .eq("id", accountId);
-
-if (balanceError) {
-  console.error("Unable to update current balance:", balanceError);
-  alert("Payment was recorded, but the account balance could not be updated.");
-  return;
-}
-    
-  alert("Payment recorded successfully.");
-  amountInput.value = "";
-  dateInput.value = "";
-
-  await loadAccounts();
-}
-    
     async function loadAccountPayments(accountId) {
 
       const { data, error } = await supabaseClient
@@ -764,70 +712,18 @@ return payments;
 }  
 
     async function voidPayment(paymentId, accountId, paymentAmount) {
-      const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-
-if (userError || !user) {
-  console.error("Unable to identify admin:", userError);
-  alert("Unable to identify the logged-in admin.");
-  return;
-}
-  const confirmed = confirm(
-    `Void this $${Number(paymentAmount).toFixed(2)} payment? The amount will be added back to the account balance.`
-  );
-
-  if (!confirmed) return;
-
-  const { data: account, error: accountError } = await supabaseClient
-    .from("account_submissions")
-    .select("current_reported_balance")
-    .eq("id", accountId)
-    .single();
-
-  if (accountError) {
-    console.error("Unable to load account:", accountError);
-    alert("Unable to void payment: " + accountError.message);
-    return;
-  }
-
-  const restoredBalance =
-    Number(account.current_reported_balance) + Number(paymentAmount);
-
-  const { error: balanceError } = await supabaseClient
-    .from("account_submissions")
-    .update({ current_reported_balance: restoredBalance })
-    .eq("id", accountId);
-
-  if (balanceError) {
-    console.error("Unable to restore balance:", balanceError);
-    alert("Unable to void payment.");
-    return;
-  }
-
- const { error: deleteError } = await supabaseClient
-  .from("account_payments")
-  .update({
-    is_voided: true,
-    voided_at: new Date().toISOString(), voided_by: user.id
-  
-  })
-  .eq("id", paymentId);
-
-  if (deleteError) {
-    console.error("Unable to delete payment:", deleteError);
-
-    // Put the balance back if deleting the payment failed.
-    await supabaseClient
-      .from("account_submissions")
-      .update({ current_balance: Number(account.current_balance) })
-      .eq("id", accountId);
-
-    alert("Payment could not be voided.");
-    return;
-  }
-
-  alert("Payment voided successfully.");
-  await loadAccounts();
-}
+      const key = "void-" + paymentId;
+      if (paymentsInFlight.has(key)) return;
+      if (!confirm(`Void this $${Number(paymentAmount).toFixed(2)} payment? The amount will be added back to the account balance.`)) return;
+      paymentsInFlight.add(key);
+      try {
+        const { error } = await supabaseClient.rpc("void_account_payment", { p_payment_id: paymentId });
+        if (error) throw error;
+        await loadAccounts();
+        alert("Payment voided successfully.");
+      } catch (error) { alert("Unable to void payment: " + error.message); }
+      finally { paymentsInFlight.delete(key); }
+    }
     verifyAdmin();
 </script>
 
