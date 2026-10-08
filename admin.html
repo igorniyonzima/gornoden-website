@@ -401,7 +401,7 @@ container.innerHTML = accounts.map(account => {
 
         <small style="opacity:.7;">
             ${new Date(update.created_at).toLocaleString()}
-            ${update.posted_by ? ` • ${update.posted_by}` : ""}
+            ${update.posted_by ? ` • ${escapeHtml(update.posted_by)}` : ""}
         </small>
 
         ${
@@ -410,7 +410,7 @@ container.innerHTML = accounts.map(account => {
                     <div style="margin-top:6px; font-size:.85rem;">
                         <strong>VOIDED</strong>
                         ${update.voided_at ? ` • ${new Date(update.voided_at).toLocaleString()}` : ""}
-                        ${update.voided_by ? ` • ${update.voided_by}` : ""}
+                        ${update.voided_by ? ` • ${escapeHtml(update.voided_by)}` : ""}
                     </div>
                 `
                 : `
@@ -691,7 +691,7 @@ if (historyContainer) {
     historyContainer.innerHTML = `
       ${payments.map(payment => `
        <p>
-  ${payment.payment_date} — $${Number(payment.payment_amount).toLocaleString(undefined, {
+  ${escapeHtml(payment.payment_date)} — $${Number(payment.payment_amount).toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })}
@@ -699,7 +699,7 @@ if (historyContainer) {
 ? `<span style="margin-left:10px;">
     <strong>VOIDED</strong>
     <small style="display:block; margin-top:4px;">
-      Voided by: ${adminNames[payment.voided_by] || "Unknown Admin"}
+      Voided by: ${escapeHtml(adminNames[payment.voided_by] || "Unknown Admin")}
       ${payment.voided_at ? ` • ${new Date(payment.voided_at).toLocaleString()}` : ""}
     </small>
   </span>`
