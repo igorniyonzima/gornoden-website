@@ -328,10 +328,10 @@ container.innerHTML = accounts.map(account => {
     <h3>${escapeHtml(account.debtor_business_name || "Unnamed Business")}</h3>
 
     <p><strong>Client:</strong> ${escapeHtml(account.client_legal_name || "—")}</p>
-    <p><strong>Account #:</strong> ${account.invoice_account_number || "—"}</p>
+    <p><strong>Account #:</strong> ${escapeHtml(account.invoice_account_number || "—")}</p>
     <p><strong>Original Amount:</strong> $${Number(account.original_invoice_amount || 0).toLocaleString()}</p>
     <p><strong>Current Balance:</strong> $${Number(account.current_reported_balance || 0).toLocaleString()}</p>
-    <p><strong>Service:</strong> ${account.service_requested || "—"}</p>
+    <p><strong>Service:</strong> ${escapeHtml(account.service_requested || "—")}</p>
     <p><strong>Status:</strong> ${account.status || "Received"}</p>
     <div class="status-controls">
 <select class="status-select" id="status-${account.id}">
@@ -354,8 +354,8 @@ container.innerHTML = accounts.map(account => {
 
 <div id="details-${account.id}" style="display:none;">
 <div class="account-details">
-  <p><strong>Debtor Contact:</strong> ${account.debtor_contact_name || "—"}</p>
-  <p><strong>Business Address:</strong> ${account.debtor_business_address || "—"}</p>
+  <p><strong>Debtor Contact:</strong> ${escapeHtml(account.debtor_contact_name || "—")}</p>
+  <p><strong>Business Address:</strong> ${escapeHtml(account.debtor_business_address || "—")}</p>
   <p><strong>City:</strong> ${account.debtor_city || "—"}</p>
   <p><strong>State:</strong> ${account.debtor_state || "—"}</p>
   <p><strong>ZIP Code:</strong> ${account.debtor_zip_code || "—"}</p>
