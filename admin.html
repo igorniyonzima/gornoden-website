@@ -622,6 +622,12 @@ async function voidClientUpdate(updateId) {
     return;
   }
 
+ const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+ if (userError || !user) {
+   alert("Your session has expired. Please sign in again before recording a payment.");
+   return;
+ }
+
  const { data: account, error: accountError } = await supabaseClient
   .from("account_submissions")
   .select("current_reported_balance")
@@ -646,7 +652,8 @@ if (newBalance < 0) {
     .insert({
       account_id: accountId,
       payment_amount: amount,
-      payment_date: paymentDate
+      payment_date: paymentDate,
+      recorded_by: user.id
     });
 
   if (error) {
