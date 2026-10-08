@@ -259,6 +259,12 @@
     SUPABASE_KEY
   );
 
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
     async function verifyAdmin() {
   const { data: { session } } = await supabaseClient.auth.getSession();
 
@@ -319,14 +325,14 @@ container.innerHTML = accounts.map(account => {
 );
   return `
   <div style="border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:20px; margin-top:18px;">
-    <h3>${account.debtor_business_name || "Unnamed Business"}</h3>
+    <h3>${escapeHtml(account.debtor_business_name || "Unnamed Business")}</h3>
 
-    <p><strong>Client:</strong> ${account.client_legal_name || "—"}</p>
-    <p><strong>Account #:</strong> ${account.invoice_account_number || "—"}</p>
+    <p><strong>Client:</strong> ${escapeHtml(account.client_legal_name || "—")}</p>
+    <p><strong>Account #:</strong> ${escapeHtml(account.invoice_account_number || "—")}</p>
     <p><strong>Original Amount:</strong> $${Number(account.original_invoice_amount || 0).toLocaleString()}</p>
     <p><strong>Current Balance:</strong> $${Number(account.current_reported_balance || 0).toLocaleString()}</p>
-    <p><strong>Service:</strong> ${account.service_requested || "—"}</p>
-    <p><strong>Status:</strong> ${account.status || "Received"}</p>
+    <p><strong>Service:</strong> ${escapeHtml(account.service_requested || "—")}</p>
+    <p><strong>Status:</strong> ${escapeHtml(account.status || "Received")}</p>
     <div class="status-controls">
 <select class="status-select" id="status-${account.id}">
  <option value="Received" ${account.status === "Received" ? "selected" : ""}>Received</option>
@@ -348,20 +354,20 @@ container.innerHTML = accounts.map(account => {
 
 <div id="details-${account.id}" style="display:none;">
 <div class="account-details">
-  <p><strong>Debtor Contact:</strong> ${account.debtor_contact_name || "—"}</p>
-  <p><strong>Business Address:</strong> ${account.debtor_business_address || "—"}</p>
-  <p><strong>City:</strong> ${account.debtor_city || "—"}</p>
-  <p><strong>State:</strong> ${account.debtor_state || "—"}</p>
-  <p><strong>ZIP Code:</strong> ${account.debtor_zip_code || "—"}</p>
-  <p><strong>Email:</strong> ${account.debtor_email || "—"}</p>
-  <p><strong>Phone:</strong> ${account.debtor_phone || "—"}</p>
-  <p><strong>Invoice Date:</strong> ${account.invoice_date || "—"}</p>
-  <p><strong>Contractual Due Date:</strong> ${account.contractual_due_date || "—"}</p>
-  <p><strong>Account Notes:</strong> ${account.account_notes || "—"}</p>
+  <p><strong>Debtor Contact:</strong> ${escapeHtml(account.debtor_contact_name || "—")}</p>
+  <p><strong>Business Address:</strong> ${escapeHtml(account.debtor_business_address || "—")}</p>
+  <p><strong>City:</strong> ${escapeHtml(account.debtor_city || "—")}</p>
+  <p><strong>State:</strong> ${escapeHtml(account.debtor_state || "—")}</p>
+  <p><strong>ZIP Code:</strong> ${escapeHtml(account.debtor_zip_code || "—")}</p>
+  <p><strong>Email:</strong> ${escapeHtml(account.debtor_email || "—")}</p>
+  <p><strong>Phone:</strong> ${escapeHtml(account.debtor_phone || "—")}</p>
+  <p><strong>Invoice Date:</strong> ${escapeHtml(account.invoice_date || "—")}</p>
+  <p><strong>Contractual Due Date:</strong> ${escapeHtml(account.contractual_due_date || "—")}</p>
+  <p><strong>Account Notes:</strong> ${escapeHtml(account.account_notes || "—")}</p>
   <p><strong>B2B Certified:</strong> ${account.b2b_certified ? "Yes" : "No"}</p>
 <div class="admin-notes">
   <strong>Private Admin Notes:</strong>
-  <textarea id="admin-notes-${account.id}" rows="4" placeholder="Add private notes for this account...">${account.admin_notes || ""}</textarea>
+  <textarea id="admin-notes-${account.id}" rows="4" placeholder="Add private notes for this account...">${escapeHtml(account.admin_notes || "")}</textarea>
   <button class="status-button" onclick="saveAdminNotes('${account.id}')">
     Save Notes
   </button>
@@ -390,7 +396,7 @@ container.innerHTML = accounts.map(account => {
           ${updatesForAccount.map(update => `
     <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,.12);">
         <div style="${update.is_voided ? "text-decoration:line-through; opacity:.6;" : ""}">
-            ${update.update_text}
+            ${escapeHtml(update.update_text)}
         </div>
 
         <small style="opacity:.7;">
