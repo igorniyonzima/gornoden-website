@@ -265,6 +265,22 @@
       })[char]);
     }
 
+    document.getElementById("sign-out").addEventListener("click", async () => {
+      const button = document.getElementById("sign-out");
+      button.disabled = true;
+      button.textContent = "Signing out...";
+      try {
+        const { error } = await supabaseClient.auth.signOut({ scope: "local" });
+        if (error) throw error;
+        window.location.replace("login.html");
+      } catch (error) {
+        console.error("Unable to sign out:", error);
+        alert("Unable to sign out. Please try again.");
+        button.disabled = false;
+        button.textContent = "Sign Out";
+      }
+    });
+
     async function verifyAdmin() {
   const { data: { session } } = await supabaseClient.auth.getSession();
 
@@ -291,6 +307,9 @@ await loadAccounts();
     }
 
  async function loadAccounts() {
+  const openDetails = Array.from(document.querySelectorAll('[id^="details-"]'))
+    .filter(element => element.style.display === "block")
+    .map(element => element.id.slice("details-".length));
   const { data: accounts, error } = await supabaseClient
     .from("account_submissions")
     .select("id,created_at,user_id,client_legal_name,debtor_contact_name,debtor_business_name,debtor_business_address,debtor_city,debtor_state,debtor_zip_code,debtor_email,debtor_phone,invoice_account_number,original_invoice_amount,current_reported_balance,invoice_date,contractual_due_date,service_requested,account_notes,b2b_certified,status")
@@ -470,6 +489,13 @@ container.innerHTML = accounts.map(account => {
 </div>
   `;
 }).join("");
+  for (const accountId of openDetails) {
+    const details = document.getElementById(`details-${accountId}`);
+    if (details) {
+      details.style.display = "block";
+      await loadAccountPayments(accountId);
+    }
+  }
 }  
 function toggleDetails(accountId) {
   const details = document.getElementById(`details-${accountId}`);
@@ -542,6 +568,7 @@ async function postClientUpdate(accountId) {
   }
 
   textarea.value = "";
+  await loadAccounts();
   alert("Client update posted successfully.");
 }
 async function voidClientUpdate(updateId) {
