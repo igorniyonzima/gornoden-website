@@ -339,7 +339,7 @@ const paymentsHtml =
                 <div class="client-update-item">
                   <small>
                     ${new Date(
-                      payment.payment_date || payment.created_at
+                      payment.payment_date ? payment.payment_date + "T00:00:00" : payment.created_at
                     ).toLocaleDateString()}
                   </small>
 
