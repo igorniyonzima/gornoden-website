@@ -201,6 +201,14 @@
     const supabaseClient =
       window.supabase.createClient(supabaseUrl, supabaseKey);
 
+    // Escape untrusted database text before inserting it into HTML templates.
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
     async function loadAccountStatus() {
 
       const {
@@ -302,7 +310,7 @@ data.forEach((account) => {
                   <small>
                     ${new Date(update.created_at).toLocaleDateString()}
                   </small>
-                  <p>${update.update_text || ""}</p>
+                  <p>${escapeHtml(update.update_text)}</p>
                 </div>
               `
             )
@@ -356,14 +364,14 @@ const paymentsHtml =
     : "";
 
   card.innerHTML = `
-    <h2>${account.debtor_business_name || "Commercial Account"}</h2>
+    <h2>${escapeHtml(account.debtor_business_name || "Commercial Account")}</h2>
 
     <p class="account-number">
-      Account # ${account.invoice_account_number || "—"}
+      Account # ${escapeHtml(account.invoice_account_number || "—")}
     </p>
 
     <span class="status-badge">
-      ${account.status || "Received"}
+      ${escapeHtml(account.status || "Received")}
     </span>
 
     <div class="status-details">
@@ -375,7 +383,7 @@ const paymentsHtml =
       <div>
         <span class="detail-label">Service</span>
         <span class="detail-value">
-          ${account.service_requested || "—"}
+          ${escapeHtml(account.service_requested || "—")}
         </span>
       </div>
 
